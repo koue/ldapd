@@ -37,7 +37,7 @@ CFLAGS+=	-I${.CURDIR} -g
 CFLAGS+=	-Wall -Wstrict-prototypes -Wmissing-prototypes
 CFLAGS+=	-Wmissing-declarations
 CFLAGS+=	-Wshadow -Wpointer-arith -Wcast-qual
-CFLAGS+=	-Wsign-compare
+CFLAGS+=	-Wsign-compare -Werror=implicit-function-declaration
 CFLAGS+=	-I${EVENTDIR}/src/lib/libevent \
 		-I${IMSGDIR}/src/lib/libutil \
 		-I${.CURDIR}/../../lib/libutil \
