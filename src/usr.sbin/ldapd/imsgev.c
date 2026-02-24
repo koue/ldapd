@@ -29,6 +29,10 @@
 #include "imsgev.h"
 #include "log.h"
 
+#ifndef __OpenBSD__
+#include "getdtablecount.h"
+#endif
+
 void imsgev_add(struct imsgev *);
 void imsgev_dispatch(int, short, void *);
 void imsgev_disconnect(struct imsgev *, int);
