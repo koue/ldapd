@@ -1,4 +1,4 @@
-/*	$OpenBSD: ldape.c,v 1.37 2023/03/01 08:17:53 claudio Exp $ */
+/*	$OpenBSD: ldape.c,v 1.40 2025/05/11 15:38:48 tb Exp $ */
 
 /*
  * Copyright (c) 2009, 2010 Martin Hedenfalk <martin@bzero.se>
@@ -110,8 +110,7 @@ send_ldap_extended_response(struct conn *conn, int msgid, unsigned int type,
 
 	return;
 fail:
-	if (root)
-		ober_free_elements(root);
+	ober_free_elements(root);
 }
 
 int
@@ -185,10 +184,8 @@ ldap_refer(struct request *req, const char *basedn, struct search *search,
 	return LDAP_REFERRAL;
 
 fail:
-	if (root != NULL)
-		ober_free_elements(root);
-	if (ref_root != NULL)
-		ober_free_elements(ref_root);
+	ober_free_elements(root);
+	ober_free_elements(ref_root);
 	request_free(req);
 	return LDAP_REFERRAL;
 }
@@ -270,19 +267,28 @@ ldap_compare(struct request *req)
 	if ((entry = namespace_get(ns, dn)) == NULL)
 		return ldap_respond(req, LDAP_NO_SUCH_OBJECT);
 
-	if ((attr = ldap_find_attribute(entry, at)) == NULL)
+	if ((attr = ldap_find_attribute(entry, at)) == NULL) {
+		ober_free_elements(entry);
 		return ldap_respond(req, LDAP_NO_SUCH_ATTRIBUTE);
-
-	if ((attr = attr->be_next) == NULL)	/* skip attribute name */
-		return ldap_respond(req, LDAP_OTHER);
-
-	for (elm = attr->be_sub; elm != NULL; elm = elm->be_next) {
-		if (ober_get_string(elm, &s) != 0)
-			return ldap_respond(req, LDAP_OTHER);
-		if (strcasecmp(value, s) == 0)
-			return ldap_respond(req, LDAP_COMPARE_TRUE);
 	}
 
+	if ((attr = attr->be_next) == NULL) {	/* skip attribute name */
+		ober_free_elements(entry);
+		return ldap_respond(req, LDAP_OTHER);
+	}
+
+	for (elm = attr->be_sub; elm != NULL; elm = elm->be_next) {
+		if (ober_get_string(elm, &s) != 0) {
+			ober_free_elements(entry);
+			return ldap_respond(req, LDAP_OTHER);
+		}
+		if (strcasecmp(value, s) == 0) {
+			ober_free_elements(entry);
+			return ldap_respond(req, LDAP_COMPARE_TRUE);
+		}
+	}
+
+	ober_free_elements(entry);
 	return ldap_respond(req, LDAP_COMPARE_FALSE);
 }
 
@@ -548,6 +554,7 @@ ldape_open_result(struct imsg *imsg)
 {
 	struct namespace	*ns;
 	struct open_req		*oreq = imsg->data;
+	int			 fd;
 
 	if (imsg->hdr.len != sizeof(*oreq) + IMSG_HEADER_SIZE)
 		fatal("invalid size of open result");
@@ -555,24 +562,25 @@ ldape_open_result(struct imsg *imsg)
 	if (oreq->path[PATH_MAX-1] != '\0')
 		fatal("bogus path");
 
-	log_debug("open(%s) returned fd %d", oreq->path, imsg->fd);
+	fd = imsg_get_fd(imsg);
+	log_debug("open(%s) returned fd %d", oreq->path, fd);
 
 	TAILQ_FOREACH(ns, &conf->namespaces, next) {
 		if (namespace_has_referrals(ns))
 			continue;
 		if (strcmp(oreq->path, ns->data_path) == 0) {
-			namespace_set_data_fd(ns, imsg->fd);
+			namespace_set_data_fd(ns, fd);
 			break;
 		}
 		if (strcmp(oreq->path, ns->indx_path) == 0) {
-			namespace_set_indx_fd(ns, imsg->fd);
+			namespace_set_indx_fd(ns, fd);
 			break;
 		}
 	}
 
 	if (ns == NULL) {
 		log_warnx("spurious open result");
-		close(imsg->fd);
+		close(fd);
 	} else
 		namespace_queue_schedule(ns, 0);
 }

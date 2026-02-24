@@ -1,3 +1,187 @@
+2026-01-18 16:38  schwarze
+
+	* usr.sbin/ldapd/ldapd.conf.5: Slightly iprove a confusing wording
+	  in the parse.y manuals: The things that need quoting are not
+	  necessarily "argument names", and not even necessarily "names" at
+	  all, so just talk about "arguments".
+
+	  "I guess?" florian@ and no objection from otto@, both back in
+	  July 2025.
+
+	  Actually, the quoting rules are more complicated than the text
+	  makes believe, but i do not know how to better describe them.  It
+	  may not be easy because some suspect the implementation may be
+	  somewhat adhoc rather than based on cleary defined lexical rules.
+
+2025-07-07 20:56  schwarze
+
+	* usr.sbin/ldapd/ldapd.conf.5: In the manual pages for
+	  configuration files based on parse.y, describe the syntax of both
+	  defining and using macros, rather than exclusively relying on
+	  examples, which some of the pages do not even provide.  In those
+	  pages containing tables of content, also clarify that the
+	  "Macros" section contains *definitions* of variables.  Both
+	  changes were already committed to vm.conf(5) earlier.
+
+	  In those few pages that referenced cpp(1) and m4(1), stop doing
+	  that because the macro definition syntax and the macro
+	  dereferencing syntax of both languages is totally different from
+	  the parse.y syntax.
+
+	  OK florian@, and deraadt also requests keeping these manuals in
+	  sync.
+
+2025-06-13 18:34  schwarze
+
+	* usr.sbin/ldapd/btree.3: The mdoc(7) .Ft macro does not need
+	  quoting of its arguments, but about 10% of our manual pages using
+	  this macro employed useless quoting anyway.  Remove these quotes
+	  such that they do not incite fear, uncertainty, and doubt in
+	  developers who happen to look at these pages.  jmc@ and tb@ agree
+	  with the direction.
+
+2025-05-11 15:38  tb
+
+	* usr.sbin/ldapd/: auth.c, ldape.c, modify.c: Plug a few leaks
+	  after namespace_get()
+
+	  This patch fixes several memory leaks in ldapd caused by missing
+	  calls to ober_free_elements after using namespace_get. The
+	  namespace_get function eventually calls ober_read_element, which
+	  allocates memory for parsed BER elements.
+
+	  The most significant leak happens during processing of bind
+	  requests from non-root users in auth.c. The returned ber_element
+	  was not freed after being processed.
+
+	  Similar issues were found and fixed in ldape.c and modify.c. In
+	  these cases, ber_element returned by namespace_get was also left
+	  unfreed.
+
+	  From Anton Kasimov
+
+2025-05-11 15:30  tb
+
+	* usr.sbin/ldapd/: ldape.c, modify.c: Remove some NULL checks
+	  before ober_free_elements()
+
+	  From Anton Kasimov
+
+2024-11-26 06:12  tb
+
+	* share/mk/bsd.regress.mk: Pass -g to CFLAGS for regression testing
+
+	  It is annoying to have a regress test crash and then be faced
+	  with question marks in the backtrace, and then have to recompile
+	  and pass -g via DEBUG or similar.
+
+	  This may bite people with small obj/. Let's see if anyone shouts.
+
+	  ok anton claudio
+
+2024-11-21 13:39  claudio
+
+	* usr.sbin/ldapd/imsgev.c: ldapd is also different to other imsg
+	  daemons.
+
+	  OK tb@
+
+2024-11-21 13:38  claudio
+
+	* usr.sbin/ldapctl/ldapctl.c: Convert simple stuff in usr.sbin over
+	  to new imsgbuf_init behaviour
+
+	  OK tb@
+
+2024-11-21 13:26  claudio
+
+	* usr.sbin/ldapctl/ldapctl.c: Unify error reporting in various
+	  control programs.
+
+	  Just use "read error" since the code also uses "write error" for
+	  the imsg_flush case.
+
+	  OK tb@
+
+2024-11-21 13:25  claudio
+
+	* usr.sbin/ldapd/imsgev.c: Only ldapd tried to handle fd exhaustion
+	  during imsg fd passing.
+
+	  Move the getdtablecount check back into ldapd.
+
+	  OK tb@
+
+2024-11-21 13:21  claudio
+
+	* usr.sbin/ldapctl/ldapctl.c: Convert the common imsgbuf_read calls
+	  to the post EAGAIN world.
+
+	  OK tb@
+
+2024-11-21 13:18  claudio
+
+	* usr.sbin/ldapd/imsgev.c: Use imsgbuf_queuelen() instead of
+	  accessing the w.queue member.
+
+	  OK tb@
+
+2024-11-21 13:17  claudio
+
+	* usr.sbin/ldapd/imsgev.c: Use imsgbuf_clear() where appropriate
+	  instead of msgbuf_clear().
+
+	  OK tb@
+
+2024-11-21 13:17  claudio
+
+	* usr.sbin/: ldapctl/ldapctl.c, ldapd/imsgev.c: Rename imsg_init,
+	  imsg_clear, imsg_read, imsg_write and imsg_flush to imsgbuf_init,
+	  imsgbuf_clear, imsgbuf_read, imsgbuf_write and imsgbuf_flush.
+
+	  This separates the imsgbuf API from the per-imsg API.
+
+	  OK tb@
+
+2024-11-21 13:16  claudio
+
+	* usr.sbin/ldapd/imsgev.c: Convert imsg_write() callers to the new
+	  simplified return logic.
+
+	  OK tb@
+
+2024-11-21 13:10  claudio
+
+	* usr.sbin/ldapd/imsgev.c: Introduce imsg_write() and use it
+	  instead of msgbuf_write().
+
+	  imsg_write() is just a thin wrapper around msgbuf_write(). So
+	  this is mostly search and replace.
+
+	  OK tb@
+
+2024-11-21 13:08  claudio
+
+	* usr.sbin/ldapctl/ldapctl.c: Use imsg_flush() instead of
+	  implementing the same by hand.
+
+	  OK tb@
+
+2024-11-05 09:18  claudio
+
+	* usr.sbin/ldapctl/ldapctl.c: ncomplete is set but never used.
+	  Noticed by cc OK tb@
+
+2024-05-21 05:00  jsg
+
+	* usr.sbin/ldapd/ldapd.h: remove prototypes with no matching
+	  function and externs with no var partly checked by millert@
+
+2024-01-17 08:28  claudio
+
+	* usr.sbin/ldapd/ldape.c: Use imsg_get_fd() and a local variable.
+	  OK florian@
+
 2023-11-10 12:12  martijn
 
 	* lib/libutil/ber.c: Give ober_printf_elements() a ber_element
