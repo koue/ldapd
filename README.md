@@ -12,17 +12,19 @@ http://cvsweb.openbsd.org/cgi-bin/cvsweb/src/usr.sbin/ldapd/
 * libressl
 
 ```
+git submodule update --init
 make
-cd src/regress/usr.sbin/ldapd/ && make
-cd - && make install
+```
+
+## Test
+
+```
+pw useradd ldap -d /nonexistent -m -c ldap -s /usr/sbin/nologin
+pkg install openldap26-client p5-perl-ldap
+cd src/regress/usr.sbin/ldapd/
+make
 ```
 
 ## Usage
 
 `ldapd -f etc/examples/ldapd.conf`
-
-## Status
-
-master | develop
--------|--------
-[![Build Status](https://cipier.net/status/koue/ldapd/master)](https://cipier.net/status/koue/ldapd/master) | [![Build Status](https://cipier.net/status/koue/ldapd/develop)](https://cipier.net/status/koue/ldapd/develop)

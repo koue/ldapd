@@ -9,6 +9,7 @@ src/regress/usr.sbin/ldapd/dc=example,dc=com_data.db
 src/regress/usr.sbin/ldapd/dc=example,dc=com_indx.db
 src/regress/usr.sbin/ldapd/ldapd1.conf
 src/regress/usr.sbin/ldapd/log
+src/regress/usr.sbin/ldapd/ldapd.log
 src/usr.bin/ldap/ldap
 src/usr.sbin/ldapctl/ldapctl
 src/usr.sbin/ldapctl/parse.c
