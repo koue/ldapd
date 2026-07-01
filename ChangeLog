@@ -1,3 +1,22 @@
+2026-06-30 18:55  jan
+
+	* usr.bin/ldap/aldap.c: login_ldap(8)/ldap(1): fix endless loop
+
+	  Goto fail on closed socket and check for evbuffer_add(3) errors,
+	  too.
+
+	  Original bug was reported by Matthias Pitzl.
+
+	  On Tue, Jun 30, 2026 at 11:35:32AM +0200, Martijn van Duren
+	  wrote:
+	  > Could you also make sure other aldap.c users get the fix?
+
+	  OK martijn@
+
+2026-03-10 04:02  deraadt
+
+	* lib/libc/gen/authenticate.c: use O_CLOEXEC; ok guenther
+
 2026-01-18 16:38  schwarze
 
 	* usr.sbin/ldapd/ldapd.conf.5: Slightly iprove a confusing wording
