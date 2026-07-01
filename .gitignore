@@ -3,6 +3,7 @@
 *.full
 *.gz
 *.o
+*.pieo
 src/regress/usr.sbin/ldapd/dc=bar,dc=quux_data.db
 src/regress/usr.sbin/ldapd/dc=bar,dc=quux_indx.db
 src/regress/usr.sbin/ldapd/dc=example,dc=com_data.db
