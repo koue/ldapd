@@ -1,3 +1,18 @@
+2026-07-10 06:42  jmatthew
+
+	* usr.bin/ldap/aldap.c: Tighten up parsing of paged search controls
+	  in search results so we error out if the control is badly formed
+	  rather than trusting that it contained the right elements.
+
+	  some problems pointed out by Frank Denis, some more identified
+	  after that ok jan@
+
+2026-07-03 11:28  jan
+
+	* usr.bin/ldap/aldap.c: aldap_parse(): simplify error handling
+
+	  looks good to me. jmatthew@
+
 2026-06-30 18:55  jan
 
 	* usr.bin/ldap/aldap.c: login_ldap(8)/ldap(1): fix endless loop
