@@ -1,3 +1,17 @@
+2026-08-04 06:57  claudio
+
+	* usr.sbin/ldapctl/ldapctl.c: Switch to imsgbuf_get and use
+	  imsg_get_data for two stat messages.
+
+	  ok jmatthew@
+
+2026-08-04 06:56  claudio
+
+	* usr.sbin/ldapd/imsgev.c: Switch ldapd to imsgbuf_get and adjust
+	  the type of 'n' to int.
+
+	  OK jmatthew@
+
 2026-07-10 06:42  jmatthew
 
 	* usr.bin/ldap/aldap.c: Tighten up parsing of paged search controls
