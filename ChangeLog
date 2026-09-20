@@ -1,3 +1,45 @@
+2026-09-10 20:24  bluhm
+
+	* usr.sbin/ldapd/: auth.c, conn.c, ldapd.c, ldapd.h, ldape.c:
+	  Assign connections a 64 bit identifier rather than using the
+	  socket fd to identify them between subprocesses.
+
+	  Based on a report from Franz Bettag of Bettag Systems from
+	  jmatthew@; OK deraadt@
+
+	  this is errata/7.9/021_ldapd.patch.sig
+
+2026-09-10 20:23  bluhm
+
+	* usr.sbin/ldapd/: auth.c, conn.c, ldapd.c, ldapd.h, ldape.c:
+	  Assign connections a 64 bit identifier rather than using the
+	  socket fd to identify them between subprocesses.
+
+	  Based on a report from Franz Bettag of Bettag Systems from
+	  jmatthew@; OK deraadt@
+
+	  this is errata/7.8/057_ldapd.patch.sig
+
+2026-09-10 01:55  jmatthew
+
+	* usr.sbin/ldapd/: auth.c, conn.c, ldapd.c, ldapd.h, ldape.c:
+	  Assign connections a 64 bit identifier rather than using the
+	  socket fd to identify them between subprocesses.
+
+	  Based on a report from Franz Bettag of Bettag Systems ok deraadt
+
+2026-09-06 18:56  deraadt
+
+	* usr.sbin/ldapd/ldapd.c: Replace argv[0] with execvp(3) for
+	  fork+exec privsep with getexecpath(3) and execv(3).
+
+2026-08-29 17:41  daniel
+
+	* lib/libc/gen/auth_subr.c: libc: fix ability to set
+	  AUTHV_INTERACTIVE
+
+	  ok millert@
+
 2026-08-04 06:57  claudio
 
 	* usr.sbin/ldapctl/ldapctl.c: Switch to imsgbuf_get and use
