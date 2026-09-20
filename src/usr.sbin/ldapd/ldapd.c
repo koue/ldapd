@@ -42,6 +42,10 @@
 #include "ldapd.h"
 #include "log.h"
 
+#ifndef __OpenBSD__
+#include "getexecpath.h"
+#endif
+
 void		 usage(void);
 void		 ldapd_sig_handler(int fd, short why, void *data);
 void		 ldapd_sigchld_handler(int sig, short why, void *data);

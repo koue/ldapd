@@ -10,7 +10,8 @@ SRCS=		log.c logmsg.c control.c \
 		util.c ldapd.c ldape.c conn.c attributes.c namespace.c \
 		btree.c filter.c search.c parse.y \
 		auth.c modify.c index.c evbuffer_tls.c \
-		validate.c uuid.c schema.c imsgev.c syntax.c matching.c
+		validate.c uuid.c schema.c imsgev.c syntax.c matching.c \
+		getexecpath.c
 
 .PATH: ${.CURDIR}/../../lib/libutil
 SRCS+=		ber.c
